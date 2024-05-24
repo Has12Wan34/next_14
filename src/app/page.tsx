@@ -1,23 +1,37 @@
-'use client'
+import { delay } from "@/utils/delay";
+import Card from "@/components/card";
+import type { Metadata } from 'next';
 
-import { signIn, signOut, useSession } from 'next-auth/react';
+type MovieProp = {
+    userId: string;
+    id: string;
+    title: string;
+    body: string;
+};
 
-export default function SignIn() {
-  const { data: session } = useSession<any | null>();
-
-  if (session) {
-    return (
-      <>
-        Signed in as {session?.user?.name} <br />
-        <button onClick={() => signOut()}>Sign out</button>
-      </>
-    );
-  }
-
-  return (
-    <>
-      Not signed in <br />
-      <button onClick={() => signIn()}>Sign in</button>
-    </>
-  );
+ 
+export const metadata: Metadata = {
+  title: 'movie',
+  description: 'movies',
 }
+
+export default async function Users() {
+
+    const url = `https://jsonplaceholder.typicode.com/posts`;
+    const data = await fetch(url);
+    const res = await data.json();
+    await delay(1000);
+
+    return (
+        <div className="container">
+            <div className="row">
+                {res?.map((m:MovieProp) => (
+                    <div key={m.id} className="col py-1">
+                        <Card key={m.id} title={m.title} body={m.body} link={`/movie/${m.id}`}/>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+  }
+  

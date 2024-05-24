@@ -1,30 +1,42 @@
 'use client'
 
 import { NextPage } from "next";
-import { FormEventHandler, useState } from "react";
-import { getCsrfToken, signIn, signOut, useSession } from "next-auth/react";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from 'next/navigation';
 
 interface Props {};
 
 const SignIn: NextPage = (props): JSX.Element => {
+
+  const { push } = useRouter();
   const [userInfo, setUserInfo] = useState({ email: '', password: ''});
-  const handleSubmit = async () => {
-    // e.preventDefault();
-    const res = await signIn('credentials', {
+  const handleSubmit = async (e:any) => {
+    e.preventDefault();
+    await signIn('credentials', {
       email: userInfo.email,
       password: userInfo.password,
-      redirect: false
+      callbackUrl: '/'
     });
-    console.log(res?.status)
   }
   
-return <div className="sign-in-form">
-    {/* <form onSubmit={handleSubmit}> */}
-      <h1>Login</h1>
-      <input value={userInfo.email} onChange={({ target}) => setUserInfo({ ...userInfo, email: target.value })} type="email" placeholder="john@email.com" />
-      <input value={userInfo.password} onChange={({ target}) => setUserInfo({ ...userInfo, password: target.value })} type="password" placeholder="****" />
-      <button type="button" onClick={handleSubmit}>Login</button>
-    {/* </form> */}
-  </div>
+  return (
+    <div className="w-100 d-flex justify-content-center">
+      <div className="card h-100 p-3" style={{ width : '50%' }}>
+        <h1>Login</h1>
+        <form className="d-grid gap-3" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Email address</label>
+            <input type="email" className="form-control" placeholder="Enter email" value={userInfo.email} onChange={({ target}) => setUserInfo({ ...userInfo, email: target.value })}/>
+          </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input type="password" className="form-control" placeholder="Password" value={userInfo.password} onChange={({ target}) => setUserInfo({ ...userInfo, password: target.value })}/>
+          </div>
+          <button type="submit" className="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  )
 }
 export default SignIn;
