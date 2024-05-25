@@ -3,19 +3,16 @@
 import { NextPage } from "next";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from 'next/navigation';
 
-interface Props {};
+export default function SignIn() {
 
-const SignIn: NextPage = (props): JSX.Element => {
-
-  const { push } = useRouter();
   const [userInfo, setUserInfo] = useState({ email: '', password: ''});
+
   const handleSubmit = async (e:any) => {
     e.preventDefault();
     await signIn('credentials', {
-      email: userInfo.email,
-      password: userInfo.password,
+      email: userInfo?.email,
+      password: userInfo?.password,
       callbackUrl: '/'
     });
   }
@@ -27,11 +24,11 @@ const SignIn: NextPage = (props): JSX.Element => {
         <form className="d-grid gap-3" onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Email address</label>
-            <input type="email" className="form-control" placeholder="Enter email" value={userInfo.email} onChange={({ target}) => setUserInfo({ ...userInfo, email: target.value })}/>
+            <input type="email" className="form-control" placeholder="Enter email" value={userInfo?.email} onChange={({ target}) => setUserInfo({ ...userInfo, email: target.value })}/>
           </div>
           <div className="form-group">
             <label>Password</label>
-            <input type="password" className="form-control" placeholder="Password" value={userInfo.password} onChange={({ target}) => setUserInfo({ ...userInfo, password: target.value })}/>
+            <input type="password" className="form-control" placeholder="Password" value={userInfo?.password} onChange={({ target}) => setUserInfo({ ...userInfo, password: target.value })}/>
           </div>
           <button type="submit" className="btn btn-primary">Submit</button>
         </form>
@@ -39,4 +36,3 @@ const SignIn: NextPage = (props): JSX.Element => {
     </div>
   )
 }
-export default SignIn;

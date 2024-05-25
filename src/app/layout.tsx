@@ -2,6 +2,7 @@
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ReactNode } from 'react';
+import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { Provider } from 'react-redux';
@@ -9,7 +10,7 @@ import store from './store';
 
 interface RootLayoutProps {
   children: ReactNode;
-  session: any; 
+  // session: AppProps; 
 }
 
 function Profile() {
@@ -32,11 +33,11 @@ function Profile() {
   );
 }
 
-const RootLayout = ({ children, session }: RootLayoutProps) => {
+const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang="en">
       <body>
-        <SessionProvider session={session}>
+        <SessionProvider>
           <Provider store={store}>
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
               <div className="container-fluid">
