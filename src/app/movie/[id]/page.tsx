@@ -12,6 +12,13 @@ interface User {
     body: string;
 }
 
+export async function generateMetadata({ params}: Params) {
+    return { 
+        title: params.id, 
+        description: params.title,
+    }
+}
+
 export default async function MovieDetail({ params } : Params) {
 
     const url = `https://jsonplaceholder.typicode.com/posts/${params.id}`;
