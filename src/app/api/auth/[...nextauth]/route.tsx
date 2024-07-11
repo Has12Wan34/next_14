@@ -1,5 +1,8 @@
 import NextAuth from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 
 const handler = NextAuth({
   providers: [
@@ -36,6 +39,14 @@ const handler = NextAuth({
           return null;
         }
       }
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!
     })
   ],
   pages: {
@@ -43,10 +54,24 @@ const handler = NextAuth({
     signOut: '/auth/signout',
     error: '/auth/error',
   },
-  secret: 'nextauth',
+  secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
-    async jwt({ token, user } : { token: any, user: any}) {
-      if (user) {
+    async signIn({ user, account, profile, email, credentials }: { user:any, account:any, profile?:any, email?:any, credentials?:any}) {
+      return true
+    },
+    async jwt({ token, user, account, profile } : { token: any, user: any, account:any, profile?:any }) {
+      if (account?.provider === "github") {
+        token.accessToken = account.access_token;
+        token.user = { 
+          email: user.email, 
+          fname: user.name };
+      }else if (account?.provider === "google") {
+        token.accessToken = account.access_token;
+        token.user = { 
+          email: profile.email, 
+          fname: profile.given_name, 
+          lname: profile.family_name };
+      }else if (user) {
         const { email, fname, lname } = user.user;
         token.accessToken = user.user.token;
         token.user = { email, fname, lname };
